@@ -1,28 +1,25 @@
 package main
 
 import (
-    "net/http"
+	"net/http"
 
-    "github.com/gin-gonic/gin"
+	"github.com/gayathrikrishna/api-gateway/handlers"
+	"github.com/gayathrikrishna/api-gateway/models"
+	"github.com/gin-gonic/gin"
 )
 
 func main() {
-    r := gin.Default()
+	models.ConnectDatabase()
+	r := gin.Default()
 
-    r.GET("/health", func(c *gin.Context) {
-        c.JSON(http.StatusOK, gin.H{
-            "status": "ok",
-        })
-    })
+	r.GET("/health", func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{
+			"status": "ok",
+		})
+	})
 
-    r.POST("/echo", func(c *gin.Context) {
-        var body map[string]any
-        if err := c.ShouldBindJSON(&body); err != nil {
-            c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-            return
-        }
-        c.JSON(http.StatusOK, body)
-    })
+	r.POST("/register", handlers.Register)
+	r.POST("/login", handlers.Login)
 
-    r.Run(":8080")
+	r.Run(":8080")
 }
